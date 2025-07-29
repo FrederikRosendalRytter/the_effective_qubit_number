@@ -27,11 +27,11 @@ $\Phi = \{ \frac{1}{12}, \frac{1}{6}, \frac{1}{3}, \frac{5}{12}, \frac{7}{12}, \
 
 which ensures that,
 
-$\epsilon(n) := \int_0^1 |\phi - \phi_{\text{opt.}}(n)| \stackrel{\text{see thesis}}{=} \sum_{\phi \in \Phi} |\phi - \phi_{\text{opt.}}(n)|.$
+$\epsilon(n) := \int_0^1 |\phi - \phi_{\text{opt.}}(n)| \stackrel{\text{see thesis}}{=} \frac{3}{4|\Phi|} \sum_{\phi \in \Phi} |\phi - \phi_{\text{opt.}}(n)|.$
 
 The phases $\Phi$ therefore represent all possible choices of the free variable $\phi$. For these representatives it turns out that $\phi_{\text{est.}}(n) = \phi_{\text{opt.}}(n)$ with atleast $99.99\%$ probability, if we assume no noise and choose $n_s = 100$. This implies that under the same conditions,
 
-$\epsilon_{\text{est.}}(n) := \sum_{\phi \in \Phi} |\phi - \phi_{\text{est.}}(n)| = \epsilon(n),$
+$\epsilon_{\text{est.}}(n) := \frac{3}{4|\Phi|} \sum_{\phi \in \Phi} |\phi - \phi_{\text{est.}}(n)| = \epsilon(n),$
 
 with atleast $99.92\%$ probability. Deviations from this equality is thus very unlikely to observe in the absence of noise. Furthermore, the presence of noise will tend to produce more uniformly distributed outcomes $\hat{p}(n, n_s=100)$, which will tend to produce larger errors $|\phi - \phi_{\text{est.}}(n)|$ and thus deviations,
 
@@ -39,7 +39,7 @@ $\epsilon_{\text{est.}}(n) \neq \epsilon(n).$
 
 Such deviations thus directly measure the presence of quantum mechanical noise in the system and will be the base of the definition of $n_{\text{eff}}$. To get stable results $\epsilon_{\text{est.}}(n)$ is sampled $n_{\epsilon}$ times and averaged,
 
-$\mu_{\epsilon}(n) = \frac{1}{n_{\epsilon}} \sum_{i = 1}^{n_{\epsilon}} \epsilon_{\text{est.}}^{i}(n).$
+$\mu_{\epsilon}(n) = \frac{1}{n_{\epsilon}} \sum_{i = 1}^{n_{\epsilon}} \epsilon_{\text{est.}}^{i}(n) = \frac{3}{4|\Phi|n_{\epsilon}} \sum_{i = 1}^{n_{\epsilon}} \sum_{\phi \in \Phi} |\phi - \phi_{\text{est.}}(n)|.$
 
 A natural uncertainty on $\mu_{\epsilon}(n)$ is the standard error $\alpha_{\epsilon}(n)$. The deviation of this mean from the theoretically expected value,
 
@@ -58,10 +58,24 @@ where $n'$ is the first qubit count for which we get a failure. In words, $n_{\t
 ![n_eff example](README_figures/n_eff_example.png)
 
 ## How To Measure It
-1. Sample empirical probability distributions $$
+The general proceedure to measure $n_{\text{eff}}$ is outlined below. If you have limits on the ressources available, this needs to be specified in the proceedure. Each experiment on a given number of qubits $n$ takes
+
+$100 \cdot |\Phi| \cdot n_{\epsilon} \sim 100 \cdot 8 \cdot 75 = 60000$
+
+calls to QPE. This might be a usefull quantity to incorporate when constraining the maximally allowed ressource usage.
+
+1. Start with $n = 2$ and choose a fixed $n_{\epsilon}$. Typical values used in the thesis are $n_{\epsilon} \sim 50-100$.
+2. Sample phase estimates $\phi_{\text{est.}}(n)$ based on empirical probability distributions $\hat{p}(m, n_s=100)$ for each $\phi \in \Phi$ a given amount of times $n_{\epsilon}$. This number determines the certainty with which we can learn $\mu_{\epsilon}(n)$.
+3. Compute mean experimental loss of numerical accuracy $\Delta_{\text{loss}}(n) \pm \alpha_{\epsilon}(n)$.
+4. If $S(n) = 1$ increase the qubit count $n \rightarrow n+1$ and repeat steps 2-3. If $S(n) = 0$ or if $n$ is the maximal amount of qubits on the device, let $n' = n$ and continue to step 5.
+5. Return $n_{\text{eff}} = 1 + \sum_{n = 2}^{n'} S(n)$.
+
+(Explain how the code should be used)
 
 ## Rules
-...
+1. All optimization and transpiling tools are allowed when measuring $n_{\text{eff}}$, as long as these do not use information about the theoretically expected outcomes of the QPE algorithm. This information is not accessible in pratice, and should therefore not be used here.
+2. All optimization tools used should be reported in order to ensure transparency between those using the measured metric $n_{\text{eff}}$ to make decisions, and those performing the measurement itself.
+3. The empirical distributions $\hat{p}(m, n_s=100)$ underlying the phase estimates $\phi_{\text{est.}}(n)$ should not be manipulated. This could alter the phase estimates $\phi_{\text{est.}}(n)$ and is considered cheating.
 
 ## Documentation
 ...
