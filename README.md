@@ -4,9 +4,9 @@ The effective qubit number $n_{\text{eff}}$ is a single number metric based on q
 
 ## Contents
  - [Definition of The Effective Qubit Number](#definition-of-the-effective-qubit-number)
- - [How To Measure It (In Words)](#how-to-measure-it)
+ - [How To Measure It (In Words)](#how-to-measure-it-in-words)
  - [Rules](#rules)
- - [How To Measure It (In Practice)](#documentation)
+ - [How To Measure It (In Practice)](#how-to-measure-it-in-practice)
 
 ## Definition of The Effective Qubit Number
 The prefixed test implementation of QPE is given below, where the unitary we are estimating eigenvalues of is a phase gate $P(2\pi\phi)$ with eigenstate $\ket{1}$ and eigenvalue $e^{i2\pi\phi}$. The top-most qubit is the least significant qubit and the inverse Fourier transform is without any swaps.
